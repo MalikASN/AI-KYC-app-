@@ -1,0 +1,111 @@
+plugins {
+   id "com.android.application"
+   id "kotlin-android"
+   id "dev.flutter.flutter-gradle-plugin"
+   
+   
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    compileSdkVersion 34
+    
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    configurations {
+         all*.exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+    }
+
+    
+  sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/jniLibs']  // Point to the directory with your .so files
+            java.srcDirs += 'src/main/kotlin'
+            java.srcDirs += 'src/main/java' // Ensure this is included
+        }
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+        checkReleaseBuilds false
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.sga.prod"
+        buildConfigField "String", "LICENSE", "\"eyJ2ZXJzaW9uIjoxLCJjcmVhdGVkIjoiMjAyNC0wMy0wNSIsImN1c3RvbWVyIjoiQ2FwdHVyZURvYyBBTEciLCJvcmRlciI6IiMyMDI0MDMwMTgyMDAwMDcxIOKAlCBGd2Q6IEZhY2lhbCBSZWNvZyB0ZXN0aW5nIGxpY2Vuc2UgZXhwaXJlZCBleHQgb2Y6ICMyMDIzMTAwNDgyMDAwMTA3IOKAlCBDYXB0dXJlRG9jIEFsZ2VyaWVuIiwibGljZW5zZVR5cGUiOiJBUFBMSUNBVElPTiIsImxpY2Vuc2VJZCI6ImQxYmJmNGY4MGE5NDAyMDQyYWRiOGU2NTVlYWQ2M2Y5ODU5MWUzNTg5MTM0ZjBjNjcxMTNkOGUxMjA3ZDczMDYiLCJvcyI6IkFuZHJvaWQiLCJ2YWxpZFVudGlsIjoiMjAyNC0wOS0wNCIsInNka3MiOlt7InByb2R1Y3RJZCI6MTEwMjEwMSwiZGVzY3JpcHRpb24iOiJGYWNlUmVjb2duaXRpb24yIn0seyJwcm9kdWN0SWQiOjExMDIxMDIsImRlc2NyaXB0aW9uIjoiSUNBT0NoZWNrMiJ9LHsicHJvZHVjdElkIjoxMTAyMTAwLCJkZXNjcmlwdGlvbiI6IkZhY2VEZXRlY3Rpb24ifSx7InByb2R1Y3RJZCI6MTEwMjEwNSwiZGVzY3JpcHRpb24iOiJGYWNlRXhwcmVzc2lvbiJ9LHsicHJvZHVjdElkIjoxMTAyMTAzLCJkZXNjcmlwdGlvbiI6IkZhY2UgTGl2ZW5lc3MifV19.MEUCIQDbhZK/mbSqgHMzWkswNfEEYp3H8Fo0g9C7N5M8H2g4PQIgOMhUzzuJMjfKiONYNBxxLkjQXigat4wlRclXc/KCf60=\""
+        minSdkVersion 26
+        targetSdkVersion 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        ndk {
+            abiFilters 'arm64-v8a' // Include this ABI if your .so file is for arm64-v8a
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+   signingConfigs {
+       release {
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
+           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+           storePassword keystoreProperties['storePassword']
+       }
+   }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles 'proguard-rules.pro'
+       }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+ 
+    implementation fileTree(dir: './libs', include: ['*.aar', '*.jar'], exclude: [])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10"
+    implementation 'net.sf.scuba:scuba-sc-android:0.0.18'
+    implementation 'com.madgag.spongycastle:prov:1.54.0.0'
+    implementation 'org.jmrtd:jmrtd:0.7.18'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.2'
+    implementation 'com.github.mhshams:jnbis:1.1.0'
+   // implementation 'org.bouncycastle:bcpkix-jdk15on:1.65'
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.73'
+    //implementation "org.bouncycastle:bcprov-jdk15to18:1.74"
+}
