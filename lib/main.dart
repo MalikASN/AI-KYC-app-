@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -52,6 +53,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    createPreferences();
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
   }
@@ -60,6 +62,29 @@ class _MyAppState extends State<MyApp> {
         _themeMode = mode;
         FlutterFlowTheme.saveThemeMode(mode);
       });
+
+  void createPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Set default color theme if it doesn't exist
+    /*  if (!prefs.containsKey("colorTheme")) {
+      const defaultColor = '0xFFe40e0e';
+      await prefs.setString('colorTheme', defaultColor);
+    } else {
+      // If colorTheme exists, update the theme color
+      String? color = prefs.getString('colorTheme');
+      if (color != null && color.isNotEmpty) {
+      
+        FlutterFlowTheme.of(context)
+            .updatePrimaryColor(Color(int.parse(color)));
+      }
+    }*/
+
+    // Set default login logo if it doesn't exist
+    if (!prefs.containsKey("loginLogo")) {
+      await prefs.setString('loginLogo', "assets/images/LogoOoredoo.png");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -21,10 +21,7 @@ public class FaceLivenessProcessor {
     private double yawMinThrAngle;
     private double maxPitchThr = 15.0;
     private double maxRollThr = 15.0;
-    private boolean isCenterImageSet = false;
-    private boolean isMinImageSet = false;
-    private boolean isMaxImageSet = false;
-    private double livenessScore = 0;
+
 
 
     public FaceLivenessProcessor(String licenseKey, Object context) throws DermalogFaceSdkException{
@@ -46,15 +43,16 @@ public class FaceLivenessProcessor {
         yawMaxThrAngle = livenessDetector.getMaxYawThrAngle();
         yawMinThrAngle = livenessDetector.getMinYawThrAngle();
 
+         Log.d("CheckLiveness", "hr areeeee" + String.valueOf(yawCenterThrAngle) +" " + String.valueOf(yawMaxThrAngle + " " + String.valueOf(yawMinThrAngle)));
 
         Log.d("CheckLiveness", "threshhold stored");
 
-        livenessDetector.reset();
+      //  livenessDetector.reset();
     }
 
     
     double getLivenessScore() {
-        return livenessScore;
+        return DermalogUtilities.livenessScore;
     }
 
     private FaceInfo getFaceInfo(Image currentImage) {
@@ -83,24 +81,26 @@ public class FaceLivenessProcessor {
                 return;
             }
 
-            Log.d("CheckLiveness", "img dim" + String.valueOf(currentImage.getHeight()) + String.valueOf(currentImage.getWidth())  );
+            Log.d("CheckLiveness", "img thres" + String.valueOf(Math.abs(faceInfo.pitch) ) + String.valueOf(Math.abs(faceInfo.roll))  );
+            Log.d("CheckLiveness", "hr areeeee" + String.valueOf(yawCenterThrAngle) +" " + String.valueOf(yawMaxThrAngle + " " + String.valueOf(yawMinThrAngle)));
 
             // Step 4: Set the corresponding images on the liveness detector
+         //   Log.d("CheckLiveness", String.valueOf(pose.getYaw()) + String.valueOf(pose.getPitch())  );
             if (Math.abs(faceInfo.pitch) < maxPitchThr && Math.abs(faceInfo.roll) < maxRollThr) {
                 double currentYaw = faceInfo.yaw;
                 Log.d("CheckLiveness", "current yaw" + String.valueOf(currentYaw) );
-                if (Math.abs(currentYaw) < yawCenterThrAngle) {
+                if (Math.abs(currentYaw) < 10) {
                     // Set the center image (frontal pose)
                     yawCenterThrAngle = Math.abs(currentYaw);
                     livenessDetector.setImage(currentImage, faceInfo.facePoints, Enums.InputImageType.CENTER_YAW_FACE);
-                    isCenterImageSet = true;
+                    DermalogUtilities.isCenterImageSet = true;
                     Log.d("CheckLiveness", "center detected" );
                 }
-                if (currentYaw < yawMinThrAngle) { 
+                if (currentYaw <  yawMinThrAngle) { 
                     // Set the min. yaw image (pose sideways to the left)
                     yawMinThrAngle = currentYaw;
                     livenessDetector.setImage(currentImage, faceInfo.facePoints, Enums.InputImageType.MIN_YAW_FACE);
-                    isMinImageSet = true;
+                    DermalogUtilities.isMinImageSet = true;
                     Log.d("CheckLiveness", "left detected" );
                 }
 
@@ -108,7 +108,7 @@ public class FaceLivenessProcessor {
                     // Set the max. yaw image (pose sideways to the right)
                     yawMaxThrAngle = currentYaw;
                     livenessDetector.setImage(currentImage, faceInfo.facePoints, Enums.InputImageType.MAX_YAW_FACE);
-                    isMaxImageSet = true;
+                    DermalogUtilities.isMaxImageSet = true;
                     Log.d("CheckLiveness", "right detected" );
                 }
             }
@@ -118,16 +118,15 @@ public class FaceLivenessProcessor {
             Log.d("CheckLiveness", " facePoints disposed" );
 
             // Step 6: Get the liveness score if all required images have been set
-            if (isCenterImageSet && isMinImageSet && isMaxImageSet) {
+            if (DermalogUtilities.isCenterImageSet && DermalogUtilities.isMinImageSet && DermalogUtilities.isMaxImageSet) {
     
-                livenessScore = livenessDetector.getLivenessScore();
-                livenessDetector.reset();
-
-                //reset all parameters
-                this.isMaxImageSet = false;
-                this.isCenterImageSet =  false;
-                this.isMinImageSet = false;
-                this.livenessScore = 0;
+                DermalogUtilities.livenessScore = livenessDetector.getLivenessScore();
+                Log.d("CheckLiveness", "score is " + String.valueOf(  livenessDetector.getLivenessScore() ));
+                //livenessDetector.reset();
+                DermalogUtilities.isMaxImageSet = false;
+                DermalogUtilities.isCenterImageSet =  false;
+                DermalogUtilities.isMinImageSet = false;
+                
             }else{
                 Log.d("CheckLiveness" , "not yet");
             }

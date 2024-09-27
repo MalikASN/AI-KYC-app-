@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cross_file/src/types/interface.dart';
+import 'package:facial_reco_p_o_c/form_components/take_self/classifier.dart';
 import 'package:vibration/vibration.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -23,6 +24,9 @@ class TakeSelfWidget extends StatefulWidget {
 }
 
 class _TakeSelfWidgetState extends State<TakeSelfWidget> {
+  String frontPath = "";
+  String rightPath = "";
+  String leftPath = "";
   late TakeSelfModel _model;
   File? _capturedImage;
   late FaceCameraController controller;
@@ -34,6 +38,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
   };
   int faceProgression = 0;
   double livenessScore = 0.0;
+  ImageLivenessPredictor imageLiveness = ImageLivenessPredictor();
   DermalogBridge dermalogBridge = DermalogBridge();
 
   // Function to expand the bounding box by a factor
@@ -54,8 +59,8 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
   @override
   void initState() {
     super.initState();
+    //imageLiveness.loadModel();
     _model = createModel(context, () => TakeSelfModel());
-
     controller = FaceCameraController(
       imageResolution: ImageResolution.high,
       enableAudio: false,
@@ -91,9 +96,9 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
               final Size imageSize = Size(originalImage.width.toDouble(),
                   originalImage.height.toDouble());
 
-              // Expand the bounding box by 20%
+              // Expand the bounding box by 65%
               final Rect expandedBoundingBox =
-                  expandRect(boundingBox, 0.4, imageSize);
+                  expandRect(boundingBox, 0.99, imageSize);
 
               // Crop the expanded area from the image
               final img.Image croppedImage = img.copyCrop(
@@ -114,21 +119,27 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
               final double? pitch = detectedFace.headEulerAngleX;
               final double? Roll = detectedFace.headEulerAngleZ;
               if (pitch != null && Roll != null) {
-                if (pitch <= 15 && Roll <= 15 && pitch >= -15 && Roll >= -15) {
+                if (pitch <= 10 && Roll <= 10 && pitch >= -10 && Roll >= -10) {
                   if (yaw != null) {
-                    if (yaw < -70) {
+                    if (yaw < -60) {
                       if (faceProgression == 0) {
                         setState(() {
                           map["leftRotation"] = true;
                           faceProgression++;
                         });
 
+                        setState(() {
+                          leftPath = uncroppedImageFile.path;
+                        });
+
+                        /*  imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
                         //call liveness SDK
-                        /*  dermalogBridge.checkLiveness(uncroppedImageFile.path);*/
+                        dermalogBridge.checkLiveness(uncroppedImageFile.path);
 
                         Vibration.vibrate(duration: 300);
                       }
-                    } else if (yaw > 70) {
+                    } else if (yaw > 60) {
                       if (faceProgression == 1) {
                         setState(() {
                           map["rightRotation"] = true;
@@ -136,16 +147,26 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                         });
 
                         //call liveness SDK
+                        setState(() {
+                          rightPath = uncroppedImageFile.path;
+                        });
+                        /* imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
                         dermalogBridge.checkLiveness(uncroppedImageFile.path);
                         Vibration.vibrate(duration: 300);
                       }
-                    } else if (yaw <= 15 && yaw >= -15) {
+                    } else if (yaw <= 2 && yaw >= -2) {
                       if (faceProgression == 2) {
                         setState(() {
                           map["straight"] = true;
                           faceProgression++;
                         });
+                        setState(() {
+                          frontPath = uncroppedImageFile.path;
+                        });
 
+                        /*  imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
                         //call liveness SDK
                         double score = await dermalogBridge
                             .checkLiveness(uncroppedImageFile.path);
@@ -175,7 +196,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
 
                   // Rest of your face detection and validation logic
                   // ...
-                } else {
+                } /* else {
                   Vibration.vibrate(duration: 100, repeat: 2);
                   // Reset parameters for another try
                   setState(() {
@@ -183,7 +204,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                     map = {};
                     faceProgression = 0;
                   });
-                }
+                }*/
                 faceDetector.close();
               }
             }
@@ -413,7 +434,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                           );
                           setState(() => _capturedImage = null);
                         },
-                        text: 'Take a selfie',
+                        text: 'Retake a selfie',
                         options: FFButtonOptions(
                           height: 40.0,
                           padding: const EdgeInsetsDirectional.fromSTEB(
@@ -439,24 +460,44 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                   ],
                 ),
               )
-            : SmartFaceCamera(
-                showCaptureControl: false,
-                showCameraLensControl: false,
-                showFlashControl: false,
-                controller: controller,
-                messageBuilder: (context, face) {
-                  if (faceProgression == 0) {
-                    return _message('Turn your face right ');
-                  }
-                  if (faceProgression == 1) {
-                    return _message('Turn your face left ');
-                  }
-                  if (faceProgression == 2) {
-                    return _message('Look straight');
-                  }
+            : Column(
+                children: [
+                  Text(faceProgression.toString()),
+                  Image.file(
+                    File(frontPath),
+                    width: 50,
+                    height: 50,
+                  ),
+                  Image.file(
+                    File(rightPath),
+                    width: 50,
+                    height: 50,
+                  ),
+                  Image.file(
+                    File(leftPath),
+                    width: 50,
+                    height: 50,
+                  ),
+                  SmartFaceCamera(
+                    showCaptureControl: false,
+                    showCameraLensControl: false,
+                    showFlashControl: false,
+                    controller: controller,
+                    messageBuilder: (context, face) {
+                      if (faceProgression == 0) {
+                        return _message('Turn your face right ');
+                      }
+                      if (faceProgression == 1) {
+                        return _message('Turn your face left ');
+                      }
+                      if (faceProgression == 2) {
+                        return _message('Look straight');
+                      }
 
-                  return const SizedBox.shrink();
-                },
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
       ),
     );
@@ -464,12 +505,24 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
 }
 
 Widget _message(String msg) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
-      child: Text(msg,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              color: Color.fromARGB(240, 173, 22, 22),
-              fontSize: 16,
-              height: 1.5,
-              fontWeight: FontWeight.w400)),
-    );
+    padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
+    child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(msg,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  color: Color.fromARGB(240, 173, 22, 22),
+                  fontSize: 16,
+                  height: 1.2,
+                  fontWeight: FontWeight.w400)),
+          Icon(
+            msg == 'Turn your face right '
+                ? Icons.arrow_circle_right_outlined
+                : msg == 'Turn your face left '
+                    ? Icons.arrow_circle_left_outlined
+                    : null,
+            color: Color.fromARGB(240, 173, 22, 22),
+          )
+        ]));

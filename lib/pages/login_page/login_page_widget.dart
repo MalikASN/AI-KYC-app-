@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -14,12 +18,14 @@ class LoginPageWidget extends StatefulWidget {
 
 class _LoginPageWidgetState extends State<LoginPageWidget> {
   late LoginPageModel _model;
+  String logoPath = "";
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    getLogoFromPref();
     _model = createModel(context, () => LoginPageModel());
 
     _model.textController1 ??= TextEditingController();
@@ -34,6 +40,18 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
     _model.dispose();
 
     super.dispose();
+  }
+
+  Future<String> getLogoPref() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("loginLogo").toString();
+  }
+
+  Future<void> getLogoFromPref() async {
+    String logo = await getLogoPref();
+    setState(() {
+      logoPath = logo; // Update the state once the logo is fetched
+    });
   }
 
   @override
@@ -64,19 +82,21 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                   ),
                   alignment: const AlignmentDirectional(-1.0, 0.0),
                   child: Padding(
-                      padding:
-                          const EdgeInsetsDirectional.fromSTEB(32.0, 0.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          32.0, 0.0, 0.0, 0.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20.0),
-                        child: Image.asset("assets/images/LogoOoredoo.png",
-                            width: 200, height: 200),
+                        child: logoPath == "assets/images/LogoOoredoo.png"
+                            ? Image.asset(logoPath, width: 200, height: 200)
+                            : Image.file(File(logoPath),
+                                width: 200, height: 200),
                       )),
                 ),
                 Align(
                   alignment: const AlignmentDirectional(0.0, 0.0),
                   child: Padding(
-                    padding:
-                        const EdgeInsetsDirectional.fromSTEB(32.0, 32.0, 32.0, 32.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        32.0, 32.0, 32.0, 32.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +150,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                               letterSpacing: 0.0,
                                             ),
                                       ),
-                                      duration: const Duration(milliseconds: 2000),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
                                       backgroundColor:
                                           FlutterFlowTheme.of(context).error,
                                     ),
@@ -300,7 +321,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),
-                                    duration: const Duration(milliseconds: 2000),
+                                    duration:
+                                        const Duration(milliseconds: 2000),
                                     backgroundColor:
                                         FlutterFlowTheme.of(context).tertiary,
                                   ),

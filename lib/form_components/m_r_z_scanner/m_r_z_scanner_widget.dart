@@ -148,7 +148,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
     DateTime dateTime = DateTime.parse(dateTimeStr);
 
     // Define the desired output format
-    DateFormat formatter = DateFormat('yyMMdd');
+    DateFormat formatter = DateFormat('yy-MM-dd');
 
     // Format the DateTime object to the desired string format
     String formattedDate = formatter.format(dateTime);
@@ -374,6 +374,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                   final mrz = str;
                                   try {
                                     mrzResult = MRZParser.parse(mrz);
+
                                     redo = false;
 
                                     if (!_isNFCAvail) {
@@ -382,8 +383,10 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                       map["firstName"] =
                                           mrzResult.givenNames.toString();
                                       map["lastName"] = mrzResult.surnames;
-                                      map["expiryDate"] = mrzResult.expiryDate
-                                          .toIso8601String();
+                                      map["expiryDate"] = convertDateRevert(
+                                          convertDateToYYMMDD(mrzResult
+                                              .expiryDate
+                                              .toIso8601String()));
                                       map["docNum"] = mrzResult.documentNumber;
                                       if (mrzResult.sex.name == "male") {
                                         map["gender"] = "Homme";
@@ -397,9 +400,11 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                             mrzResult.givenNames;
                                         _model.textController2.text =
                                             mrzResult.surnames;
-                                        _model.textController3.text = mrzResult
-                                            .expiryDate
-                                            .toIso8601String();
+                                        _model.textController3.text =
+                                            convertDateRevert(
+                                                convertDateToYYMMDD(mrzResult
+                                                    .expiryDate
+                                                    .toIso8601String()));
                                         if (mrzResult.sex.name == "male") {
                                           _model.dropDownValueController
                                               ?.value = "Homme";

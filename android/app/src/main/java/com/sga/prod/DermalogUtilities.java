@@ -31,12 +31,26 @@ import android.os.Looper;
 public class DermalogUtilities implements FlutterPlugin, MethodCallHandler {
     private MethodChannel channel;
     private Context context;
+    private  FaceLivenessProcessor aFaceLivenessProcessor;
+    public static boolean isMaxImageSet = false;
+    public static boolean isCenterImageSet = false;
+    public static boolean isMinImageSet = false;
+    public static double livenessScore = 0;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "SDKChannel");
         channel.setMethodCallHandler(this);
         context = flutterPluginBinding.getApplicationContext(); // Store the context
+
+        try{
+            System.setProperty("DERMALOG_SDK_LOG", "1");
+            aFaceLivenessProcessor = new FaceLivenessProcessor(BuildConfig.LICENSE, context);
+        }catch (DermalogFaceSdkException e) {
+            // Handle the exception, e.g., send an error result back to Flutter
+            Log.d("CheckLiveness", e.getMessage());
+        } 
+       
     }
 
     @Override
@@ -49,6 +63,7 @@ public class DermalogUtilities implements FlutterPlugin, MethodCallHandler {
                 FaceMatcher matcher = new FaceMatcher();
                 FaceDetector detector = new FaceDetector();
                 FaceEncoder encoder = new FaceEncoder();
+
 
                 String arg1 = call.argument("Image01");
                 FacePositionArray faces1 = null;
@@ -127,18 +142,19 @@ public class DermalogUtilities implements FlutterPlugin, MethodCallHandler {
 
                 result.success(file.getAbsolutePath());
             } else if (call.method.equals("CheckLiveness")) {
-
+               
                 String arg1 = call.argument("ImageToExtract");
                 Image image = new Image();
                 image.loadImageFromFile(arg1);
 
                 // call face liveness checker
-                FaceLivenessProcessor aFaceLivenessProcessor = new FaceLivenessProcessor(BuildConfig.LICENSE, context);
                 aFaceLivenessProcessor.process(image);
                 image.dispose();
 
                 // 0 if not completed xx.xx if not
                 result.success(aFaceLivenessProcessor.getLivenessScore());
+
+                livenessScore = 0;
 
             }
         
