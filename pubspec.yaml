@@ -75,6 +75,8 @@ dependencies:
   tflite_v2: ^1.0.0
   flutter_colorpicker: ^1.1.0
   file_picker: ^8.0.7
+  flutter_email_sender: ^6.0.3
+  mailer: ^6.2.0
   
 dependency_overrides:
   http: 1.2.1
@@ -91,7 +93,7 @@ dev_dependencies:
 
 flutter_launcher_icons:
     android: true
-    image_path: "assets/images/activi-logo.png"
+    image_path: "assets/images/logo_sga.png"
  
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -118,6 +120,9 @@ flutter:
     - assets/txts/Knames.txt
     - assets/models/model.tflite
     - assets/models/labels.txt
+    - assets/login_background.png
+    - assets/logo-societe-generale.png
+    - assets/logo_sga.png
 
   
   # An image asset can refer to one or more resolution-specific "variants", see

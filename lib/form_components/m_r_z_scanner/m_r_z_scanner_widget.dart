@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:facial_reco_p_o_c/backend/schema/util/NFCReaderBridge.dart';
 import 'package:facial_reco_p_o_c/backend/schema/util/OCRCleaner.dart';
 import 'package:facial_reco_p_o_c/components/nfcDialog.dart';
+import 'package:facial_reco_p_o_c/form_components/m_r_z_scanner/sga_form.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_document_scanner/google_mlkit_document_scanner.dart';
 import 'package:mrz_parser/mrz_parser.dart';
@@ -285,7 +286,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Document Capture',
+                      'Capture de document',
                       style:
                           FlutterFlowTheme.of(context).headlineSmall.override(
                                 fontFamily: 'Outfit',
@@ -503,7 +504,8 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                   ],
                                 )
                               : const Center(
-                                  child: Text("Please capture documents first"),
+                                  child: Text(
+                                      "Veuillez d'abord capturer les documents d'identité"),
                                 ),
                         ),
                         Align(
@@ -563,7 +565,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                           enabled: !_isConfirmed,
                           readOnly: true,
                           decoration: InputDecoration(
-                            labelText: 'FirstName',
+                            labelText: 'prénom ',
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
@@ -627,7 +629,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                           readOnly: true,
                           enabled: !_isConfirmed,
                           decoration: InputDecoration(
-                            labelText: 'Lastname',
+                            labelText: 'Nom',
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
@@ -696,7 +698,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                     fontFamily: 'Readex Pro',
                                     letterSpacing: 0.0,
                                   ),
-                          hintText: 'Gender',
+                          hintText: 'Sexe',
                           icon: Icon(
                             Icons.keyboard_arrow_down_rounded,
                             color: FlutterFlowTheme.of(context).secondaryText,
@@ -727,7 +729,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                           readOnly: true,
                           enabled: !_isConfirmed,
                           decoration: InputDecoration(
-                            labelText: 'Expiry date',
+                            labelText: 'Date expiration PID',
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
@@ -790,7 +792,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                           readOnly: true,
                           enabled: !_isConfirmed,
                           decoration: InputDecoration(
-                            labelText: 'Doc num',
+                            labelText: 'Num Pièce d’identité',
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
@@ -846,160 +848,12 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                   ),
                 ),
               ),
-              Align(
-                alignment: const AlignmentDirectional(-1.0, 0.0),
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      30.0, 0.0, 15.0, 10.0),
-                  child: FFButtonWidget(
-                    onPressed: () async {
-                      await showModalBottomSheet(
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: false,
-                        context: context,
-                        builder: (context) {
-                          return Padding(
-                            padding: MediaQuery.viewInsetsOf(context),
-                            child: const AddFieldBottomSheetWidget(),
-                          );
-                        },
-                      ).then((value) => safeSetState(() {}));
-                    },
-                    text: 'Add field',
-                    options: FFButtonOptions(
-                      height: 40.0,
-                      padding: const EdgeInsetsDirectional.fromSTEB(
-                          24.0, 0.0, 24.0, 0.0),
-                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                          0.0, 0.0, 0.0, 0.0),
-                      color: FlutterFlowTheme.of(context).primary,
-                      textStyle:
-                          FlutterFlowTheme.of(context).titleSmall.override(
-                                fontFamily: 'Readex Pro',
-                                color: Colors.white,
-                                letterSpacing: 0.0,
-                              ),
-                      elevation: 3.0,
-                      borderSide: const BorderSide(
-                        color: Colors.transparent,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Builder(
-                  builder: (context) {
-                    final additionalField =
-                        FFAppState().FieldsToAddList.toList();
 
-                    return Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: List.generate(additionalField.length,
-                          (additionalFieldIndex) {
-                        final additionalFieldItem =
-                            additionalField[additionalFieldIndex];
-                        return wrapWithModel(
-                          model: _model.fieldItemModels.getModel(
-                            additionalFieldIndex.toString(),
-                            additionalFieldIndex,
-                          ),
-                          updateCallback: () => setState(() {}),
-                          child: FieldItemWidget(
-                            handleAdditionnalFormChange:
-                                handleAdditionnalFormChange,
-                            key: Key(
-                              'Keyy0d_${additionalFieldIndex.toString()}',
-                            ),
-                            field: additionalFieldItem,
-                          ),
-                        );
-                      }),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(30.0, 0.0, 15.0, 10.0),
-                child: FFButtonWidget(
-                  onPressed: () {
-                    if (_isConfirmed == true) {
-                      setState(() {
-                        _isConfirmed = false;
-                      });
-                    } else {
-                      if (_model.textController1.text.isNotEmpty &&
-                          _model.textController2.text.isNotEmpty &&
-                          _model.textController3.text.isNotEmpty &&
-                          _model.textController4.text.isNotEmpty &&
-                          _model.dropDownValue != null) {
-                        if ((FFAppState().FieldsToAddList.isNotEmpty &&
-                                mrzMap.isNotEmpty) ||
-                            FFAppState().FieldsToAddList.isEmpty) {
-                          Map<String, String> map = {
-                            "firstname": _model.textController1.text,
-                            "lastname": _model.textController2.text,
-                            "gender": "Homme",
-                            "Expiry date": _model.textController3.text,
-                            "Doc num": _model.textController4.text
-                          };
-
-                          for (int i = 0;
-                              i < FFAppState().FieldsToAddList.toList().length;
-                              i++) {
-                            map[mapForm.entries.elementAt(i).key] =
-                                mapForm.entries.elementAt(i).value;
-                          }
-
-                          FFAppState().setFromData(map);
-                          setState(() {
-                            _isConfirmed = true;
-                          });
-                        } else {
-                          // Show error if any field is empty
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Please fill in all the fields')),
-                          );
-                        }
-                      } else {
-                        // Show error if any field is empty
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Please fill in all the fields')),
-                        );
-                      }
-                    }
-                  },
-                  text: _isConfirmed ? 'Update' : 'Confirm',
-                  options: FFButtonOptions(
-                    width: 250,
-                    height: 40.0,
-                    padding: const EdgeInsetsDirectional.fromSTEB(
-                        24.0, 0.0, 24.0, 0.0),
-                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
-                        0.0, 0.0, 0.0, 0.0),
-                    color: _isConfirmed == false
-                        ? FlutterFlowTheme.of(context).primary
-                        : FlutterFlowTheme.of(context).alternate,
-                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                          fontFamily: 'Readex Pro',
-                          color: Colors.white,
-                          letterSpacing: 0.0,
-                        ),
-                    elevation: 3.0,
-                    borderSide: const BorderSide(
-                      color: Colors.transparent,
-                      width: 1.0,
-                    ),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                ),
+              SGAForm(
+                isConfirmed: _isConfirmed,
+                model: _model,
+                mrzMap: mrzMap,
+                mapForm: mapForm,
               ),
             ],
           ),

@@ -61,7 +61,7 @@ class _PDFReaderWidgetState extends State<PDFReaderWidget> {
                   padding: const EdgeInsetsDirectional.fromSTEB(
                       10.0, 15.0, 10.0, 20.0),
                   child: Text(
-                    'Generated pdf contract',
+                    'Contrat PDF généré',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Readex Pro',
                           color: FlutterFlowTheme.of(context).primary,
@@ -91,7 +91,7 @@ class _PDFReaderWidgetState extends State<PDFReaderWidget> {
                           child: ffAppState.displayUserpdf == true
                               ? PdfViewer.file(pdfPath)
                               : const Center(
-                                  child: Text("loading..."),
+                                  child: Text("Chargement..."),
                                 ),
                         ),
                       ],

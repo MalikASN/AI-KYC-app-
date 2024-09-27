@@ -5,12 +5,14 @@ import 'package:facial_reco_p_o_c/backend/schema/util/SignDocBridge.dart';
 import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_theme.dart';
 import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_util.dart';
 import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_widgets.dart';
+import 'package:facial_reco_p_o_c/form_components/signature_bottom_sheet/mail_sender.dart';
 import 'package:facial_reco_p_o_c/form_components/signature_bottom_sheet/signature_bottom_sheet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class SignatureBottomSheetWidget extends StatefulWidget {
   final void Function(String) onPDFUpdate;
@@ -65,7 +67,7 @@ class _SignatureBottomSheetWidgetState
       // Send signature data to Java side
       await SignDocBridge().signDoc(
           "/data/user/0/com.sga.prod/app_flutter/userPDF.pdf",
-          1,
+          4,
           FFAppState().nfcMap["lastName"],
           signatureBytes);
 
@@ -89,7 +91,11 @@ class _SignatureBottomSheetWidgetState
       } catch (e) {
         print('Failed to save PDF: $e');
       }
-
+      try {
+        await sendMail(filePath, FFAppState().formData['email']);
+      } catch (e) {
+        print('Failed send the pdf by mail: $e');
+      }
       Vibration.vibrate();
     } on PlatformException catch (e) {
       Vibration.vibrate(repeat: 2, duration: 100);
@@ -143,7 +149,7 @@ class _SignatureBottomSheetWidgetState
                             padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 4.0, 16.0, 5.0),
                             child: Text(
-                              'Sign your contract',
+                              'Signez votre contrat',
                               style: FlutterFlowTheme.of(context)
                                   .headlineMedium
                                   .override(
@@ -219,7 +225,7 @@ class _SignatureBottomSheetWidgetState
                             onPressed: () {
                               // _model.signatureController.value;
                             },
-                            text: 'Cancel',
+                            text: 'Annuler',
                             options: FFButtonOptions(
                               width: 150.0,
                               height: 50.0,
@@ -255,7 +261,7 @@ class _SignatureBottomSheetWidgetState
                               widget.onPDFUpdate(filePath);
                               context.pop();
                             },
-                            text: 'Confirm',
+                            text: 'Confirmer',
                             options: FFButtonOptions(
                               width: 150.0,
                               height: 50.0,

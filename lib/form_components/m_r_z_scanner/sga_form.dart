@@ -1,11 +1,23 @@
+import 'package:facial_reco_p_o_c/app_state.dart';
 import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_theme.dart';
+import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_widgets.dart';
+import 'package:facial_reco_p_o_c/form_components/m_r_z_scanner/m_r_z_scanner_model.dart';
 import 'package:flutter/material.dart';
 
 class SGAForm extends StatefulWidget {
   final bool isConfirmed; // Public property (remove the underscore)
+  final MRZScannerModel model;
+  final Map<String, String> mrzMap;
+  Map<String, String> mapForm;
 
   // Constructor to accept isConfirmed as a required parameter
-  const SGAForm({Key? key, required this.isConfirmed}) : super(key: key);
+  SGAForm(
+      {Key? key,
+      required this.isConfirmed,
+      required this.model,
+      required this.mrzMap,
+      required this.mapForm})
+      : super(key: key);
 
   @override
   _SGAFormState createState() => _SGAFormState();
@@ -384,13 +396,97 @@ class _SGAFormState extends State<SGAForm> {
                 )
               ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Handle form submission
-                }
-              },
-              child: Text('Submit'),
+            Padding(
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(30.0, 0.0, 15.0, 10.0),
+              child: FFButtonWidget(
+                onPressed: () {
+                  if (_isConfirmed == true) {
+                    setState(() {
+                      _isConfirmed = false;
+                    });
+                  } else {
+                    if (widget.model.textController1!.text.isNotEmpty &&
+                        widget.model.textController2!.text.isNotEmpty &&
+                        widget.model.textController3!.text.isNotEmpty &&
+                        widget.model.textController4!.text.isNotEmpty &&
+                        widget.model.dropDownValue != null) {
+                      if ((FFAppState().FieldsToAddList.isNotEmpty &&
+                              widget.mrzMap.isNotEmpty) ||
+                          FFAppState().FieldsToAddList.isEmpty) {
+                        Map<String, String> map = {
+                          "firstname": widget.model.textController1!.text,
+                          "lastname": widget.model.textController2!.text,
+                          "gender": widget.model.dropDownValueController!.value
+                              .toString(),
+                          "Expiry date": widget.model.textController3!.text,
+                          "Doc num": widget.model.textController4!.text,
+                          "nomJeuneFille": _nomJeuneFille.text,
+                          "lieuNaissance": _lieuNaissance.text,
+                          "pere": _pere.text,
+                          "mere": _mere.text,
+                          "statusMartial":
+                              _statusMartial, // If you want to store the marital status
+                          "addressPrincipale":
+                              _addressPrincipaleController.text,
+                          "profession": _profession.text,
+                          "employeur": _employeur.text,
+                          "phoneProfessional":
+                              _phoneProfessionalController.text,
+                          "phoneHome": _phoneHomeController.text,
+                          "phoneMobile": _phoneMobileController.text,
+                          "email": _emailController.text,
+                          "dateDeliverancePID": _dateDeliverancePID.text,
+                          "lieuDeliverance": _lieuDeliverance.text,
+                          "nomDelivreur": _nomDelivreur.text,
+                          "montant": revenuesMap.toString()
+                        };
+
+                        FFAppState().setFromData(map);
+                        setState(() {
+                          _isConfirmed = true;
+                        });
+                      } else {
+                        // Show error if any field is empty
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text('Veuillez remplir tout les champs')),
+                        );
+                      }
+                    } else {
+                      // Show error if any field is empty
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Veuillez remplir tout les champs')),
+                      );
+                    }
+                  }
+                },
+                text: _isConfirmed ? 'Modifier' : 'Confirmer',
+                options: FFButtonOptions(
+                  width: 250,
+                  height: 40.0,
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
+                  iconPadding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                  color: _isConfirmed == false
+                      ? FlutterFlowTheme.of(context).primary
+                      : FlutterFlowTheme.of(context).alternate,
+                  textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                        fontFamily: 'Readex Pro',
+                        color: Colors.white,
+                        letterSpacing: 0.0,
+                      ),
+                  elevation: 3.0,
+                  borderSide: const BorderSide(
+                    color: Colors.transparent,
+                    width: 1.0,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
             ),
           ],
         ),

@@ -135,7 +135,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                         /*  imageLiveness
                             .predictImageLiveness(uncroppedImageFile.path);*/
                         //call liveness SDK
-                        dermalogBridge.checkLiveness(uncroppedImageFile.path);
+                        //  dermalogBridge.checkLiveness(uncroppedImageFile.path);
 
                         Vibration.vibrate(duration: 300);
                       }
@@ -152,10 +152,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                         });
                         /* imageLiveness
                             .predictImageLiveness(uncroppedImageFile.path);*/
-                        dermalogBridge.checkLiveness(uncroppedImageFile.path);
+                        //   dermalogBridge.checkLiveness(uncroppedImageFile.path);
                         Vibration.vibrate(duration: 300);
                       }
-                    } else if (yaw <= 2 && yaw >= -2) {
+                    } else if (yaw <= 10 && yaw >= -10) {
                       if (faceProgression == 2) {
                         setState(() {
                           map["straight"] = true;
@@ -168,12 +168,12 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                         /*  imageLiveness
                             .predictImageLiveness(uncroppedImageFile.path);*/
                         //call liveness SDK
-                        double score = await dermalogBridge
+                        /*   double score = await dermalogBridge
                             .checkLiveness(uncroppedImageFile.path);
                         setState(() {
                           livenessScore = score;
                         });
-
+*/
                         Vibration.vibrate(duration: 300);
                       }
                     }
@@ -196,7 +196,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
 
                   // Rest of your face detection and validation logic
                   // ...
-                } /* else {
+                  //   } /* else {
                   Vibration.vibrate(duration: 100, repeat: 2);
                   // Reset parameters for another try
                   setState(() {
@@ -204,24 +204,31 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                     map = {};
                     faceProgression = 0;
                   });
-                }*/
-                faceDetector.close();
+                }
+
+                // take picture if all conditions are met
+                if (!map.containsValue(false) &&
+                    map.length == 4 &&
+                    faceProgression == 4) {
+                  setState(() => _capturedImage = File(imageFile.path));
+                  DermalogBridge dermalogBridge = DermalogBridge();
+                  _performAsyncOperations(dermalogBridge, imageFile.path);
+
+                  setState(() {
+                    map = {};
+                    faceProgression = 0;
+                  });
+
+                  controller.stopImageStream();
+                  controller.dispose();
+                  faceDetector.close();
+                }
               }
             }
           }
         }
       },
-      onCapture: (File? image) {
-        if (image != null) {
-          setState(() => _capturedImage = image);
-          DermalogBridge dermalogBridge = DermalogBridge();
-          _performAsyncOperations(dermalogBridge, image.path);
-
-          // Stop the camera and dispose of the controller to turn off the green light
-          controller.stopImageStream();
-          controller.dispose();
-        }
-      },
+      onCapture: (File? image) {},
     );
   }
 
@@ -270,7 +277,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                     Align(
                       alignment: const AlignmentDirectional(0.0, 0.0),
                       child: Text(
-                        'Please take a selfie',
+                        'Veuillez prendre un selfie',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
                               color: FlutterFlowTheme.of(context).primary,
@@ -307,13 +314,11 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                             performanceMode: FaceDetectorMode.accurate,
                             onFaceDetected: (face) async {
                               if (face != null) {
-                                // Capture the current frame as an image and cast it to the expected type
                                 final cross_file.XFile? imageFile =
                                     await controller.takePicture()
                                         as cross_file.XFile?;
 
                                 if (imageFile != null) {
-                                  // Pass the captured image to ML Kit face detector
                                   final FaceDetectorOptions options =
                                       FaceDetectorOptions(
                                     performanceMode: FaceDetectorMode.accurate,
@@ -330,6 +335,38 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
 
                                   if (faces.isNotEmpty) {
                                     final Face detectedFace = faces.first;
+
+                                    // Assuming you are working with a Rect bounding box
+                                    final Rect boundingBox =
+                                        detectedFace.boundingBox;
+
+                                    // Load the image using the image package to get its size
+                                    final img.Image originalImage =
+                                        img.decodeImage(File(imageFile.path)
+                                            .readAsBytesSync())!;
+                                    final Size imageSize = Size(
+                                        originalImage.width.toDouble(),
+                                        originalImage.height.toDouble());
+
+                                    // Expand the bounding box by 65%
+                                    final Rect expandedBoundingBox = expandRect(
+                                        boundingBox, 0.99, imageSize);
+
+                                    // Crop the expanded area from the image
+                                    final img.Image croppedImage = img.copyCrop(
+                                      originalImage,
+                                      x: expandedBoundingBox.left.toInt(),
+                                      y: expandedBoundingBox.top.toInt(),
+                                      width: expandedBoundingBox.width.toInt(),
+                                      height:
+                                          expandedBoundingBox.height.toInt(),
+                                    );
+
+                                    // Save or use the cropped image as needed
+                                    final File uncroppedImageFile =
+                                        File('${imageFile.path}_uncropped.jpg')
+                                          ..writeAsBytesSync(
+                                              img.encodeJpg(croppedImage));
                                     //check for left / right /straight
 
                                     final double? yaw = face.headEulerAngleY;
@@ -338,33 +375,67 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                                     final double? Roll =
                                         detectedFace.headEulerAngleZ;
                                     if (pitch != null && Roll != null) {
-                                      if (pitch <= 15 &&
-                                          Roll <= 15 &&
-                                          pitch >= -15 &&
-                                          Roll >= -15) {
+                                      if (pitch <= 10 &&
+                                          Roll <= 10 &&
+                                          pitch >= -10 &&
+                                          Roll >= -10) {
                                         if (yaw != null) {
-                                          if (yaw < -70) {
+                                          if (yaw < -60) {
                                             if (faceProgression == 0) {
                                               setState(() {
                                                 map["leftRotation"] = true;
                                                 faceProgression++;
                                               });
+
+                                              setState(() {
+                                                leftPath =
+                                                    uncroppedImageFile.path;
+                                              });
+
+                                              /*  imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
+                                              //call liveness SDK
+                                              //  dermalogBridge.checkLiveness(uncroppedImageFile.path);
+
                                               Vibration.vibrate(duration: 300);
                                             }
-                                          } else if (yaw > 70) {
+                                          } else if (yaw > 60) {
                                             if (faceProgression == 1) {
                                               setState(() {
                                                 map["rightRotation"] = true;
                                                 faceProgression++;
                                               });
+
+                                              //call liveness SDK
+                                              setState(() {
+                                                rightPath =
+                                                    uncroppedImageFile.path;
+                                              });
+                                              /* imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
+                                              //   dermalogBridge.checkLiveness(uncroppedImageFile.path);
                                               Vibration.vibrate(duration: 300);
                                             }
-                                          } else if (yaw <= 15 && yaw >= -15) {
+                                          } else if (yaw <= 10 && yaw >= -10) {
                                             if (faceProgression == 2) {
                                               setState(() {
                                                 map["straight"] = true;
                                                 faceProgression++;
                                               });
+                                              setState(() {
+                                                frontPath =
+                                                    uncroppedImageFile.path;
+                                              });
+
+                                              /*  imageLiveness
+                            .predictImageLiveness(uncroppedImageFile.path);*/
+                                              //call liveness SDK
+                                              /*   double score = await dermalogBridge
+                            .checkLiveness(uncroppedImageFile.path);
+                        setState(() {
+                          livenessScore = score;
+                        });
+*/
                                               Vibration.vibrate(duration: 300);
                                             }
                                           }
@@ -391,50 +462,50 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                                                 "Eyes are not sufficiently open. Discarding the image.");
                                           }
                                         }
+
+                                        // Rest of your face detection and validation logic
+                                        // ...
+                                        //   } /* else {
+                                        Vibration.vibrate(
+                                            duration: 100, repeat: 2);
+                                        // Reset parameters for another try
+                                        setState(() {
+                                          livenessScore = 0;
+                                          map = {};
+                                          faceProgression = 0;
+                                        });
+                                      }
+
+                                      // take picture if all conditions are met
+                                      if (!map.containsValue(false) &&
+                                          map.length == 4 &&
+                                          faceProgression == 4) {
+                                        setState(() => _capturedImage =
+                                            File(imageFile.path));
+                                        DermalogBridge dermalogBridge =
+                                            DermalogBridge();
+                                        _performAsyncOperations(
+                                            dermalogBridge, imageFile.path);
+
+                                        setState(() {
+                                          map = {};
+                                          faceProgression = 0;
+                                        });
+
+                                        controller.stopImageStream();
+                                        controller.dispose();
+                                        faceDetector.close();
                                       }
                                     }
-
-                                    // take picture if all conditions are met
-                                    if (!map.containsValue(false) &&
-                                        map.length == 4 &&
-                                        faceProgression == 4) {
-                                      setState(() => _capturedImage =
-                                          File(imageFile.path));
-                                      DermalogBridge dermalogBridge =
-                                          DermalogBridge();
-                                      _performAsyncOperations(
-                                          dermalogBridge, imageFile.path);
-
-                                      setState(() {
-                                        map = {};
-                                        faceProgression = 0;
-                                      });
-
-                                      controller.stopImageStream();
-                                      controller.dispose();
-                                    }
-                                  } else {}
-                                  faceDetector.close();
+                                  }
                                 }
                               }
                             },
-                            onCapture: (File? image) {
-                              if (image != null) {
-                                setState(() => _capturedImage = image);
-                                DermalogBridge dermalogBridge =
-                                    DermalogBridge();
-                                _performAsyncOperations(
-                                    dermalogBridge, image.path);
-
-                                // Stop the camera and dispose of the controller to turn off the green light
-                                controller.stopImageStream();
-                                controller.dispose();
-                              }
-                            },
+                            onCapture: (File? image) {},
                           );
-                          setState(() => _capturedImage = null);
+                          //  setState(() => _capturedImage = null);
                         },
-                        text: 'Retake a selfie',
+                        text: 'Reprendre un selfie',
                         options: FFButtonOptions(
                           height: 40.0,
                           padding: const EdgeInsetsDirectional.fromSTEB(
@@ -485,13 +556,13 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                     controller: controller,
                     messageBuilder: (context, face) {
                       if (faceProgression == 0) {
-                        return _message('Turn your face right ');
+                        return _message('Tournez votre tête à droite.');
                       }
                       if (faceProgression == 1) {
-                        return _message('Turn your face left ');
+                        return _message('Tournez votre tête à gauche.');
                       }
                       if (faceProgression == 2) {
-                        return _message('Look straight');
+                        return _message('Regardez tout droit');
                       }
 
                       return const SizedBox.shrink();
@@ -518,9 +589,9 @@ Widget _message(String msg) => Padding(
                   height: 1.2,
                   fontWeight: FontWeight.w400)),
           Icon(
-            msg == 'Turn your face right '
+            msg == 'Tournez votre tête à droite.'
                 ? Icons.arrow_circle_right_outlined
-                : msg == 'Turn your face left '
+                : msg == 'Tournez votre tête à gauche.'
                     ? Icons.arrow_circle_left_outlined
                     : null,
             color: Color.fromARGB(240, 173, 22, 22),

@@ -1,4 +1,4 @@
-import 'dart:async'; // Add this import
+import 'dart:async'; // Ajoutez cette importation
 import 'dart:io';
 
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
@@ -27,7 +27,7 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
   bool comparaisonResult = false;
   final animationsMap = <String, AnimationInfo>{};
   bool _isNFCAvail = true;
-  Timer? _nfcCheckTimer; // Add a Timer variable
+  Timer? _nfcCheckTimer; // Ajoutez une variable Timer
   bool useGoogle = true;
   bool _showImage = false;
   @override
@@ -48,10 +48,10 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
       _isNFCAvail = res;
     });
 
-    // Add a short delay to ensure setState has completed
+    // Ajoutez un court délai pour assurer que setState est terminé
     await Future.delayed(const Duration(milliseconds: 500));
 
-    // Call _performAsyncOperations only after the NFC availability state is updated
+    // Appelez _performAsyncOperations seulement après la mise à jour de l'état de disponibilité NFC
     if (stateProgression == 0) {
       _performAsyncOperations(DermalogBridge());
     }
@@ -78,7 +78,7 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
   }
 
   void startNFCCheckTimer() {
-    // Periodically check NFC availability every 5 seconds
+    // Vérifiez périodiquement la disponibilité NFC toutes les 5 secondes
     _nfcCheckTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       checkNFCAvailability();
     });
@@ -103,14 +103,15 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
         ],
       ),
     });
-    checkNFCAvailability(); // Initial check
-    startNFCCheckTimer(); // Start periodic NFC checks
+    checkNFCAvailability(); // Vérification initiale
+    startNFCCheckTimer(); // Démarrer les vérifications périodiques NFC
   }
 
   @override
   void dispose() {
     setState(() => stateProgression = 0);
-    _nfcCheckTimer?.cancel(); // Cancel the timer when the widget is disposed
+    _nfcCheckTimer
+        ?.cancel(); // Annuler le minuteur lorsque le widget est éliminé
     _model.maybeDispose();
     super.dispose();
   }
@@ -148,13 +149,13 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
                     const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
                 child: Text(
                   stateProgression == 0
-                      ? 'Verifying Matching...'
+                      ? 'Vérification de la correspondance...'
                       : stateProgression == 1
-                          ? "Detecting user picture"
+                          ? "Détection de l'image de l'utilisateur"
                           : stateProgression == 2
-                              ? 'Comparing images'
+                              ? 'Comparaison des images'
                               : stateProgression == 3
-                                  ? "Result :"
+                                  ? "Résultat :"
                                   : "",
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Readex Pro',
@@ -180,7 +181,7 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
                     animationsMap['iconOnPageLoadAnimation']!),
             FFAppState().matchingScore != 0.0
                 ? Text(
-                    "Matching score is: ${FFAppState().matchingScore}",
+                    "Le score de correspondance est : ${FFAppState().matchingScore}",
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Readex Pro',
                           color: FlutterFlowTheme.of(context).primary,

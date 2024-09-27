@@ -7,30 +7,58 @@ import 'dart:io';
 void generateUserPDF(
     Map<String, String> userMap, String rectoPID, String versoPID) async {
   // Load the existing PDF document
-
   final ByteData data = await rootBundle.load('assets/pdfs/contract.pdf');
   final Uint8List bytes = data.buffer.asUint8List();
 
-  // You can now use `bytes` to process the PDF file
-  // For example, creating a PdfDocument from bytes:
+  // Creating a PdfDocument from bytes
   final PdfDocument document = PdfDocument(inputBytes: bytes);
+
   // Get the first page of the PDF
   PdfPage page = document.pages[0];
 
   // Create a PDF graphics object to draw on the page
   PdfGraphics graphics = page.graphics;
 
-  // Draw text at specific X, Y positions
-  graphics.drawString(
-    userMap.entries.elementAt(0).value,
-    PdfStandardFont(PdfFontFamily.helvetica, 18),
-    bounds: const Rect.fromLTWH(0, 0, 0, 0),
-  );
-  graphics.drawString(
-    userMap.entries.elementAt(1).value,
-    PdfStandardFont(PdfFontFamily.helvetica, 18),
-    bounds: const Rect.fromLTWH(0, 15, 0, 0),
-  );
+  // Define a list of positions for each entry (l, t, w, h)
+  List<Rect> positionList = [
+    Rect.fromLTWH(0, 0, 0, 0), // Position for first entry
+    Rect.fromLTWH(0, 20, 0, 0), // Position for second entry
+    Rect.fromLTWH(0, 40, 0, 0), // Position for third entry
+    Rect.fromLTWH(0, 60, 0, 0), // Continue adding positions...
+    Rect.fromLTWH(0, 80, 0, 0),
+    Rect.fromLTWH(0, 100, 0, 0),
+    Rect.fromLTWH(0, 120, 0, 0),
+    Rect.fromLTWH(0, 140, 0, 0),
+    Rect.fromLTWH(0, 160, 0, 0),
+    Rect.fromLTWH(0, 180, 0, 0),
+    Rect.fromLTWH(0, 200, 0, 0),
+    Rect.fromLTWH(0, 220, 0, 0),
+    Rect.fromLTWH(0, 240, 0, 0),
+    Rect.fromLTWH(0, 260, 0, 0),
+    Rect.fromLTWH(0, 280, 0, 0),
+    Rect.fromLTWH(0, 300, 0, 0),
+    Rect.fromLTWH(0, 320, 0, 0),
+    Rect.fromLTWH(0, 340, 0, 0),
+    Rect.fromLTWH(0, 360, 0, 0),
+    Rect.fromLTWH(0, 380, 0, 0),
+    Rect.fromLTWH(0, 400, 0, 0),
+  ];
+
+  // Iterate over the entries in the userMap
+  int i = 0; // Index for positionList
+  for (var entry in userMap.entries) {
+    if (i < positionList.length) {
+      graphics.drawString(
+        '${entry.key}: ${entry.value}', // Format the string as "Key: Value"
+        PdfStandardFont(PdfFontFamily.helvetica, 18),
+        bounds: positionList[i], // Use the specific position from the list
+      );
+      i++; // Move to the next position for the next entry
+    } else {
+      // Handle the case where there are more entries than positions
+      break; // Optionally break, or you can handle it as needed
+    }
+  }
 
   // Add a new page for Recto
   PdfPage rectoPage = document.pages.add();
