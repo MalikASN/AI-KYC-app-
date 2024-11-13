@@ -59,7 +59,10 @@ class _FormNavigatorWidgetState extends State<FormNavigatorWidget> {
             "${'/data/user/0/com.sga.prod/app_flutter/signedContract_' + FFAppState().nfcMap["lastName"]}.pdf")
         .delete();
     FFAppState().setExtractedPerson("");
+    FFAppState().setSelfie("");
     FFAppState().setNfcMap({});
+    FFAppState().setdocumentImagePathRecto("");
+    FFAppState().setdocumentImagePathVerso("");
   }
 
   @override

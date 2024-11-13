@@ -96,6 +96,7 @@ class FFAppState extends ChangeNotifier {
   final Map<String, String> _formData = HashMap<String, String>();
   void setFromData(Map<String, String> data) {
     _formData.addAll(data);
+    print(_formData);
   }
 
   get formData => _formData;

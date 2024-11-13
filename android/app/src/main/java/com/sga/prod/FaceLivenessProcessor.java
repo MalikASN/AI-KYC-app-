@@ -19,8 +19,8 @@ public class FaceLivenessProcessor {
     private double yawCenterThrAngle;
     private double yawMaxThrAngle;
     private double yawMinThrAngle;
-    private double maxPitchThr = 15.0;
-    private double maxRollThr = 15.0;
+    private double maxPitchThr = 20.0;
+    private double maxRollThr = 20.0;
 
 
 
@@ -81,11 +81,11 @@ public class FaceLivenessProcessor {
                 return;
             }
 
-            Log.d("CheckLiveness", "img thres" + String.valueOf(Math.abs(faceInfo.pitch) ) + String.valueOf(Math.abs(faceInfo.roll))  );
-            Log.d("CheckLiveness", "hr areeeee" + String.valueOf(yawCenterThrAngle) +" " + String.valueOf(yawMaxThrAngle + " " + String.valueOf(yawMinThrAngle)));
+            Log.d("CheckLiveness", "img thresholds" + String.valueOf(Math.abs(faceInfo.pitch) ) + String.valueOf(Math.abs(faceInfo.roll))  );
+            Log.d("CheckLiveness", "yaws" + String.valueOf(yawCenterThrAngle) +" " + String.valueOf(yawMaxThrAngle) + " " + String.valueOf(yawMinThrAngle));
 
             // Step 4: Set the corresponding images on the liveness detector
-         //   Log.d("CheckLiveness", String.valueOf(pose.getYaw()) + String.valueOf(pose.getPitch())  );
+            //Log.d("CheckLiveness", String.valueOf(pose.getYaw()) + String.valueOf(pose.getPitch())  );
             if (Math.abs(faceInfo.pitch) < maxPitchThr && Math.abs(faceInfo.roll) < maxRollThr) {
                 double currentYaw = faceInfo.yaw;
                 Log.d("CheckLiveness", "current yaw" + String.valueOf(currentYaw) );

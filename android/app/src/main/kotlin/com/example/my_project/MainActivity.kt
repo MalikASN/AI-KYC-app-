@@ -367,11 +367,10 @@ class MainActivity : FlutterActivity() {
                         "state" to mrzInfo.issuingState,
                         "nationality" to mrzInfo.nationality,
                         "identityImage" to imageBase64,
-                        "expiryDate" to mrzInfo.dateOfExpiry,
+                        "birthDate" to mrzInfo.dateOfBirth,
                         "docNum" to mrzInfo.documentNumber
                     )
 
-                    Log.d("images is" , imageBase64!!)
 
                      // clear fields
                        passportNumber = null

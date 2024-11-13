@@ -110,24 +110,28 @@ public class SignDocSampleMain
      * @param[in] aPageNo     The 1-based page number.
      * @param[in] aFieldName  The name of the signature field.
      */
-    static private void addSignatureField (SignDocDocument aDoc, int aPageNo,
-                                           String aFieldName) throws SignDocException
-    {
+    static private void addSignatureField(SignDocDocument aDoc, int aPageNo, String aFieldName) throws SignDocException {
         /* Get the dimensions of the specified page. */
-        double width = aDoc.getPageWidth (aPageNo);
-        double height = aDoc.getPageHeight (aPageNo);
-
+        double width = aDoc.getPageWidth(aPageNo);
+        double height = aDoc.getPageHeight(aPageNo);
+    
         /* Add a signature field. */
-        SignDocField field = new SignDocField ();
-        field.setName (aFieldName);
-        field.setType (SignDocField.t_signature_digsig);
-        field.setPage (aPageNo);
-        field.setLeft (width / 4);
-        field.setBottom (height / 8);
-        field.setRight (field.getLeft () + width / 2);
-        field.setTop (field.getBottom () + height / 4);
-        aDoc.addField (field, 0);
+        SignDocField field = new SignDocField();
+        field.setName(aFieldName);
+        field.setType(SignDocField.t_signature_digsig);
+        field.setPage(aPageNo);
+    
+        // Set the left, bottom, right, and top coordinates based on Rect.fromLTWH(50, 527, 0, 0)
+        // Adjust the right and top to give it a reasonable size.
+        field.setLeft(50); // x-coordinate (left)
+        field.setBottom(height - 527); // y-coordinate (bottom), since Kofax coordinates are from the bottom-left
+        field.setRight(field.getLeft() + 150); // Set a width of 150 units (adjust as needed)
+        field.setTop(field.getBottom() + 50); // Set a height of 50 units (adjust as needed)
+    
+        // Add the field to the document.
+        aDoc.addField(field, 0);
     }
+    
 
     /**
      * @brief Create a SignDocSignatureParameters object.

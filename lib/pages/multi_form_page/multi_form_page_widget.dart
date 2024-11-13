@@ -118,7 +118,7 @@ class _MultiFormPageWidgetState extends State<MultiFormPageWidget>
           backgroundColor: FlutterFlowTheme.of(context).primary,
           automaticallyImplyLeading: false,
           title: Text(
-            'E-sim activi',
+            'Appli SGA',
             style: FlutterFlowTheme.of(context).headlineMedium.override(
                   fontFamily: 'Outfit',
                   color: Colors.white,

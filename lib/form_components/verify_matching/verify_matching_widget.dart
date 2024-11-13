@@ -147,23 +147,25 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
               child: Padding(
                 padding:
                     const EdgeInsetsDirectional.fromSTEB(0.0, 20.0, 0.0, 0.0),
-                child: Text(
-                  stateProgression == 0
-                      ? 'Vérification de la correspondance...'
-                      : stateProgression == 1
-                          ? "Détection de l'image de l'utilisateur"
-                          : stateProgression == 2
-                              ? 'Comparaison des images'
-                              : stateProgression == 3
-                                  ? "Résultat :"
-                                  : "",
-                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                        fontFamily: 'Readex Pro',
-                        color: FlutterFlowTheme.of(context).primary,
-                        fontSize: 20.0,
-                        letterSpacing: 0.0,
-                        fontWeight: FontWeight.w600,
-                      ),
+                child: Center(
+                  child: Text(
+                    stateProgression == 0
+                        ? 'Vérification de la correspondance'
+                        : stateProgression == 1
+                            ? "Détection de l'utilisateur"
+                            : stateProgression == 2
+                                ? 'Comparaison des images'
+                                : stateProgression == 3
+                                    ? "Résultat :"
+                                    : "",
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Readex Pro',
+                          color: FlutterFlowTheme.of(context).primary,
+                          fontSize: 20.0,
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
               ),
             ),
@@ -181,7 +183,7 @@ class _VerifyMatchingWidgetState extends State<VerifyMatchingWidget>
                     animationsMap['iconOnPageLoadAnimation']!),
             FFAppState().matchingScore != 0.0
                 ? Text(
-                    "Le score de correspondance est : ${FFAppState().matchingScore}",
+                    "Le score est de : ${FFAppState().matchingScore}",
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Readex Pro',
                           color: FlutterFlowTheme.of(context).primary,

@@ -1,14 +1,17 @@
 import 'dart:io';
 
 import 'package:facial_reco_p_o_c/flutter_flow/flutter_flow_icon_button.dart';
+import 'package:facial_reco_p_o_c/form_components/p_d_f_reader/p_d_f_reader_model.dart';
 import 'package:facial_reco_p_o_c/form_components/p_d_f_reader/pdfLogic.dart';
 import 'package:facial_reco_p_o_c/form_components/signature_bottom_sheet/signature_bottom_sheet_widget.dart';
 import 'package:path_provider/path_provider.dart';
+//import 'package:pdf_render/pdf_render_widgets.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pdfrx/pdfrx.dart';
+//import 'package:pdf_render/pdf_render.dart';
 
 class PDFReaderWidget extends StatefulWidget {
   const PDFReaderWidget({super.key});
@@ -19,6 +22,8 @@ class PDFReaderWidget extends StatefulWidget {
 
 class _PDFReaderWidgetState extends State<PDFReaderWidget> {
   String pdfPath = "/data/user/0/com.sga.prod/app_flutter/userPDF.pdf";
+  //final controller = PdfViewerController();
+  late PDFReaderModel _model;
 
   void updatePDFPath(String path) {
     setState(() {
@@ -29,11 +34,13 @@ class _PDFReaderWidgetState extends State<PDFReaderWidget> {
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
+    _model.onUpdate();
   }
 
   @override
   void initState() {
     super.initState();
+    //_model = createModel(context, () => PDFReaderModel());
 
     generateUserPDF(FFAppState().formData, FFAppState().documentImagePathRecto,
         FFAppState().documentImagePathVerso);
@@ -101,7 +108,7 @@ class _PDFReaderWidgetState extends State<PDFReaderWidget> {
               ),
               pdfPath == "/data/user/0/com.sga.prod/app_flutter/userPDF.pdf"
                   ? Align(
-                      alignment: AlignmentDirectional(0.93, 0.94),
+                      alignment: const AlignmentDirectional(0.93, 0.94),
                       child: FlutterFlowIconButton(
                         borderColor:
                             FlutterFlowTheme.of(context).secondaryBackground,
@@ -117,6 +124,7 @@ class _PDFReaderWidgetState extends State<PDFReaderWidget> {
                         ),
                         onPressed: () async {
                           await showModalBottomSheet(
+                            isDismissible: false,
                             isScrollControlled: true,
                             backgroundColor: Colors.transparent,
                             enableDrag: false,

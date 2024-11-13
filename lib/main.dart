@@ -67,29 +67,22 @@ class _MyAppState extends State<MyApp> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Set default color theme if it doesn't exist
-    /*  if (!prefs.containsKey("colorTheme")) {
+    if (!prefs.containsKey("colorTheme")) {
       const defaultColor = '0xFFe40e0e';
       await prefs.setString('colorTheme', defaultColor);
-    } else {
-      // If colorTheme exists, update the theme color
-      String? color = prefs.getString('colorTheme');
-      if (color != null && color.isNotEmpty) {
-      
-        FlutterFlowTheme.of(context)
-            .updatePrimaryColor(Color(int.parse(color)));
-      }
-    }*/
+    }
 
     // Set default login logo if it doesn't exist
     if (!prefs.containsKey("loginLogo")) {
-      await prefs.setString('loginLogo', "assets/images/LogoOoredoo.png");
+      await prefs.setString(
+          'loginLogo', "assets/images/logo-societe-generale.png");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'E-sim activi',
+      title: 'Appli SGA',
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

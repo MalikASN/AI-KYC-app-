@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 import 'package:vibration/vibration.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SignatureBottomSheetWidget extends StatefulWidget {
   final void Function(String) onPDFUpdate;
@@ -48,8 +49,25 @@ class _SignatureBottomSheetWidgetState
     super.dispose();
   }
 
+  Future<bool> _isConnected() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return connectivityResult != ConnectivityResult.none;
+  }
+
   Future<void> _sendSignatureToJava(BuildContext context) async {
     try {
+      bool connected = await _isConnected();
+      if (!connected) {
+        setState(() {
+          showError = "Pas de connexion internet";
+        });
+        return;
+      }
+
+      /*setState(() {
+        showError = "null";
+      });*/
+
       // Capture signature as image
       final ui.Image? image = await _model.signatureController?.toImage();
       final ByteData? byteData =
@@ -96,6 +114,13 @@ class _SignatureBottomSheetWidgetState
       } catch (e) {
         print('Failed send the pdf by mail: $e');
       }
+      context.pop();
+      final filePathUi =
+          // ignore: prefer_interpolation_to_compose_strings
+          "${'${directory!.path}/signedContract_' + FFAppState().nfcMap["lastName"]}.pdf";
+
+      widget.onPDFUpdate(filePathUi);
+
       Vibration.vibrate();
     } on PlatformException catch (e) {
       Vibration.vibrate(repeat: 2, duration: 100);
@@ -196,21 +221,23 @@ class _SignatureBottomSheetWidgetState
                       ),
                     ),
                     showError != 'null'
-                        ? Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme.of(context).error,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              showError,
-                              style: FlutterFlowTheme.of(context)
-                                  .labelMedium
-                                  .override(
-                                    fontSize: 15,
-                                    fontFamily: 'Readex Pro',
-                                    letterSpacing: 0.0,
-                                  ),
+                        ? Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                showError,
+                                style: FlutterFlowTheme.of(context)
+                                    .labelMedium
+                                    .override(
+                                      color: FlutterFlowTheme.of(context).error,
+                                      fontSize: 15,
+                                      fontFamily: 'Readex Pro',
+                                      letterSpacing: 0.0,
+                                    ),
+                              ),
                             ),
                           )
                         : Container(),
@@ -223,7 +250,7 @@ class _SignatureBottomSheetWidgetState
                         children: [
                           FFButtonWidget(
                             onPressed: () {
-                              // _model.signatureController.value;
+                              context.pop();
                             },
                             text: 'Annuler',
                             options: FFButtonOptions(
@@ -251,15 +278,6 @@ class _SignatureBottomSheetWidgetState
                           FFButtonWidget(
                             onPressed: () async {
                               await _sendSignatureToJava(context);
-                              final directory =
-                                  await getExternalStorageDirectory();
-                              final filePath =
-                                  '${directory!.path}/signedContract_' +
-                                      FFAppState().nfcMap["lastName"] +
-                                      ".pdf";
-
-                              widget.onPDFUpdate(filePath);
-                              context.pop();
                             },
                             text: 'Confirmer',
                             options: FFButtonOptions(

@@ -26,13 +26,7 @@ Future<bool> sendMail(String filePath, String receiver) async {
 
   try {
     // Envoi du message
-    final sendReport = await send(message, smtpServer);
-    print('Message envoyé : ' + sendReport.toString());
-
-    // Vous pouvez également envoyer le message avec une connexion persistante
-    var connection = PersistentConnection(smtpServer);
-    await connection.send(message);
-    await connection.close();
+    await send(message, smtpServer);
 
     return true; // Retourne true si l'envoi réussit
   } catch (e) {

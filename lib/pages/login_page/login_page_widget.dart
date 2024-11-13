@@ -73,7 +73,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/login_background.png'),
+              image: AssetImage('assets/images/login_background.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -331,7 +331,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                 _model.textController1.text) ==
                                             null)) {
                                   FFAppState().formData['email'] =
-                                      _model.textController1!.value;
+                                      _model.textController1!.text;
                                   context.pushNamed('MultiFormPage');
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(

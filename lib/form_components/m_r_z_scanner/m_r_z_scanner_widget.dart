@@ -72,7 +72,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
       shouldUpdate = true;
     }
     if (currentExpiryDate !=
-        convertDateRevert(newMrzMap["expiryDate"]!.toString())) {
+        convertDateRevert(newMrzMap["birthDate"]!.toString())) {
       shouldUpdate = true;
     }
     if (currentDocNum != newMrzMap["docNum"]?.toString()) {
@@ -84,7 +84,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
         _model.textController1.text = newMrzMap["firstName"]?.toString() ?? '';
         _model.textController2.text = newMrzMap["lastName"]?.toString() ?? '';
         _model.textController3.text =
-            convertDateRevert(newMrzMap["expiryDate"]?.toString() ?? '');
+            convertDateRevert(newMrzMap["birthDate"]?.toString() ?? '');
         _model.textController4.text = newMrzMap["docNum"]?.toString() ?? '';
         if (newMrzMap["gender"] == "MALE") {
           _model.dropDownValueController?.value = "Homme";
@@ -149,7 +149,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
     DateTime dateTime = DateTime.parse(dateTimeStr);
 
     // Define the desired output format
-    DateFormat formatter = DateFormat('yy-MM-dd');
+    DateFormat formatter = DateFormat('yyMMdd');
 
     // Format the DateTime object to the desired string format
     String formattedDate = formatter.format(dateTime);
@@ -226,6 +226,12 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
     startNFCCheckTimer();
   }
 
+  void changeConfirmation(bool val) {
+    setState(() {
+      _isConfirmed = val;
+    });
+  }
+
   @override
   void dispose() {
     _model.maybeDispose();
@@ -250,7 +256,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
         ),
         child: Container(
           width: MediaQuery.sizeOf(context).width * 1.0,
-          height: 900.0,
+          height: MediaQuery.sizeOf(context).height * 0.8,
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
             borderRadius: const BorderRadius.only(
@@ -260,8 +266,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
               topRight: Radius.circular(16.0),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
+          child: ListView(
             children: [
               //  Image.file(File(FFAppState().extractedPerson)),
               Consumer<FFAppState>(
@@ -375,6 +380,12 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                   final mrz = str;
                                   try {
                                     mrzResult = MRZParser.parse(mrz);
+                                    //adding nationnalite
+                                    FFAppState().setFromData({
+                                      'Nationalite': mrzResult
+                                          .nationalityCountryCode
+                                          .toString(),
+                                    });
 
                                     redo = false;
 
@@ -384,16 +395,20 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                       map["firstName"] =
                                           mrzResult.givenNames.toString();
                                       map["lastName"] = mrzResult.surnames;
-                                      map["expiryDate"] = convertDateRevert(
-                                          convertDateToYYMMDD(mrzResult
-                                              .expiryDate
-                                              .toIso8601String()));
+                                      map["birthDate"] = mrzResult.birthDate
+                                          .toString()
+                                          .substring(0,
+                                              10); /*convertDateToYYMMDD(
+                                          mrzResult.birthDate
+                                              .toIso8601String());*/
                                       map["docNum"] = mrzResult.documentNumber;
                                       if (mrzResult.sex.name == "male") {
                                         map["gender"] = "Homme";
                                       } else {
                                         map["gender"] = "Femme";
                                       }
+                                      map['nationality'] =
+                                          mrzResult.countryCode;
                                       FFAppState().setNfcMap(map);
 
                                       setState(() {
@@ -401,11 +416,10 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                             mrzResult.givenNames;
                                         _model.textController2.text =
                                             mrzResult.surnames;
-                                        _model.textController3.text =
-                                            convertDateRevert(
-                                                convertDateToYYMMDD(mrzResult
-                                                    .expiryDate
-                                                    .toIso8601String()));
+                                        _model.textController3.text = mrzResult
+                                            .birthDate
+                                            .toString()
+                                            .substring(0, 10);
                                         if (mrzResult.sex.name == "male") {
                                           _model.dropDownValueController
                                               ?.value = "Homme";
@@ -447,101 +461,84 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                   ],
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      20.0, 20.0, 20.0, 20.0),
-                  child: SizedBox(
-                    width: 400.0,
-                    height: 400.0,
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              0.0, 0.0, 0.0, 40.0),
-                          child: (_docIdRecto != "" && _docIdVerso != "")
-                              ? PageView(
-                                  controller: _model.pageViewController ??=
-                                      PageController(initialPage: 0),
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    /*   _croped.isNotEmpty
-                                        ? ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.file(
-                                              File(path.join(_croped)),
-                                              width: 300.0,
-                                              height: MediaQuery.sizeOf(context)
-                                                      .height *
-                                                  1.0,
-                                              fit: BoxFit.contain,
-                                            ),
-                                          )
-                                        : Text(""),*/
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Image.file(
-                                        File(_docIdRecto),
-                                        width: 100.0,
-                                        height:
-                                            MediaQuery.sizeOf(context).height *
-                                                1.0,
-                                        fit: BoxFit.cover,
-                                      ),
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    20.0, 20.0, 20.0, 20.0),
+                child: SizedBox(
+                  width: 400.0,
+                  height: 250.0,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 40.0),
+                        child: (_docIdRecto != "" && _docIdVerso != "")
+                            ? PageView(
+                                controller: _model.pageViewController ??=
+                                    PageController(initialPage: 0),
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.file(
+                                      File(_docIdRecto),
+                                      width: 100.0,
+                                      height:
+                                          MediaQuery.sizeOf(context).height *
+                                              1.0,
+                                      fit: BoxFit.cover,
                                     ),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Image.file(
-                                        File(_docIdVerso),
-                                        width:
-                                            MediaQuery.sizeOf(context).width *
-                                                1.0,
-                                        height: 100.0,
-                                        fit: BoxFit.cover,
-                                      ),
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.file(
+                                      File(_docIdVerso),
+                                      width: MediaQuery.sizeOf(context).width *
+                                          1.0,
+                                      height: 100.0,
+                                      fit: BoxFit.cover,
                                     ),
-                                  ],
-                                )
-                              : const Center(
-                                  child: Text(
-                                      "Veuillez d'abord capturer les documents d'identité"),
-                                ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(-1.0, 1.0),
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.fromSTEB(
-                                16.0, 0.0, 0.0, 16.0),
-                            child: smooth_page_indicator.SmoothPageIndicator(
-                              controller: _model.pageViewController ??=
-                                  PageController(initialPage: 0),
-                              count: 2,
-                              axisDirection: Axis.horizontal,
-                              onDotClicked: (i) async {
-                                await _model.pageViewController!.animateToPage(
-                                  i,
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.ease,
-                                );
-                                setState(() {});
-                              },
-                              effect: smooth_page_indicator.ExpandingDotsEffect(
-                                expansionFactor: 3.0,
-                                spacing: 8.0,
-                                radius: 16.0,
-                                dotWidth: 16.0,
-                                dotHeight: 8.0,
-                                dotColor: FlutterFlowTheme.of(context).accent1,
-                                activeDotColor:
-                                    FlutterFlowTheme.of(context).primary,
-                                paintStyle: PaintingStyle.fill,
+                                  ),
+                                ],
+                              )
+                            : const Center(
+                                child: Text(
+                                    "Veuillez d'abord capturer les documents d'identité"),
                               ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(-1.0, 1.0),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              16.0, 0.0, 0.0, 16.0),
+                          child: smooth_page_indicator.SmoothPageIndicator(
+                            controller: _model.pageViewController ??=
+                                PageController(initialPage: 0),
+                            count: 2,
+                            axisDirection: Axis.horizontal,
+                            onDotClicked: (i) async {
+                              await _model.pageViewController!.animateToPage(
+                                i,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.ease,
+                              );
+                              setState(() {});
+                            },
+                            effect: smooth_page_indicator.ExpandingDotsEffect(
+                              expansionFactor: 3.0,
+                              spacing: 8.0,
+                              radius: 16.0,
+                              dotWidth: 16.0,
+                              dotHeight: 8.0,
+                              dotColor: FlutterFlowTheme.of(context).accent1,
+                              activeDotColor:
+                                  FlutterFlowTheme.of(context).primary,
+                              paintStyle: PaintingStyle.fill,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -612,7 +609,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                                     fontFamily: 'Readex Pro',
                                     letterSpacing: 0.0,
                                   ),
-                          maxLength: 20,
+                          maxLength: 50,
                           keyboardType: TextInputType.name,
                           validator: _model.textController1Validator
                               .asValidator(context),
@@ -729,7 +726,7 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                           readOnly: true,
                           enabled: !_isConfirmed,
                           decoration: InputDecoration(
-                            labelText: 'Date expiration PID',
+                            labelText: 'Date de naissance',
                             labelStyle: FlutterFlowTheme.of(context)
                                 .labelMedium
                                 .override(
@@ -844,16 +841,16 @@ class _MRZScannerWidgetState extends State<MRZScannerWidget> {
                               .asValidator(context),
                         ),
                       ),
+                      SGAForm(
+                        isConfirmed: _isConfirmed,
+                        model: _model,
+                        mrzMap: mrzMap,
+                        mapForm: mapForm,
+                        changeConfirmation: changeConfirmation,
+                      ),
                     ],
                   ),
                 ),
-              ),
-
-              SGAForm(
-                isConfirmed: _isConfirmed,
-                model: _model,
-                mrzMap: mrzMap,
-                mapForm: mapForm,
               ),
             ],
           ),

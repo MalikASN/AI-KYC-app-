@@ -269,7 +269,7 @@ class _PreferencesWidgetState extends State<PreferencesWidget> {
             contentPadding:
                 const EdgeInsetsDirectional.fromSTEB(24.0, 5.0, 24.0, 5.0),
           ),*/
-          SwitchListTile.adaptive(
+          /* SwitchListTile.adaptive(
             value: _model.switchListTileValue3 ??= true,
             onChanged: (newValue) async {
               setState(() => _model.switchListTileValue3 = newValue);
@@ -289,7 +289,7 @@ class _PreferencesWidgetState extends State<PreferencesWidget> {
             controlAffinity: ListTileControlAffinity.trailing,
             contentPadding:
                 const EdgeInsetsDirectional.fromSTEB(24.0, 5.0, 24.0, 5.0),
-          ),
+          ),*/
         ],
       ),
     );

@@ -9,7 +9,7 @@
     <uses-feature android:name="android.hardware.nfc" android:required="true" />
 
     <application
-        android:label="E-sim activi"
+        android:label="Appli SGA"
         tools:replace="android:label"
         android:icon="@mipmap/ic_launcher"
         android:extractNativeLibs="true"
@@ -50,7 +50,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="E-sim activi" android:host="E-sim activi.com" />
+                <data android:scheme="Appli SGA" android:host="Appli SGA.com" />
             </intent-filter>
 
             <!-- NFC Intent Filters -->

@@ -14,20 +14,6 @@ class _DialogFb2State extends State<DialogFb2> {
   @override
   void initState() {
     super.initState();
-
-    // Start a delayed check to close the dialog if nfcState == 2
-    /*  WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Check for NFC state changes and perform actions accordingly
-      final nfcProvider = Provider.of<FFAppState>(context, listen: true);
-      if (nfcProvider.nfcState == 2) {
-      
-        Future.delayed(Duration(seconds: 2), () {
-          if (mounted && Navigator.canPop(context)) {
-            Navigator.of(context).pop();
-          }
-        });
-      }
-    });*/
   }
 
   @override
@@ -59,7 +45,7 @@ class _DialogFb2State extends State<DialogFb2> {
               ),
             ),
             Text(
-              "NFC Scanning in progress",
+              "Scan NFC en cours",
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: 'Readex Pro',
                     color: FlutterFlowTheme.of(context).primary,
@@ -78,10 +64,10 @@ class _DialogFb2State extends State<DialogFb2> {
                     child: Container(
                       margin: const EdgeInsets.all(5),
                       child: Text(
-                        "Please approach your ID Card",
+                        "Veuillez approcher votre PID",
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Readex Pro',
-                              color: FlutterFlowTheme.of(context).alternate,
+                              color: FlutterFlowTheme.of(context).secondary,
                               fontSize: 12.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,

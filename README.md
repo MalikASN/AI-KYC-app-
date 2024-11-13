@@ -1,4 +1,4 @@
-# E-sim activi
+# Appli SGA
 
 A new Flutter project.
 
