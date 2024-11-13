@@ -1,3 +1,5 @@
+import 'package:facial_reco_p_o_c/pages/GIFwidget.dart';
+
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -175,34 +177,36 @@ class _MultiFormPageWidgetState extends State<MultiFormPageWidget>
                       builder: (context) {
                         switch (FFAppState().multiStepState) {
                           case 0:
+                            return const GIFwidget();
+                          case 1:
                             return wrapWithModel(
                               model: _model.takeSelfModel,
                               updateCallback: () => setState(() {}),
                               child: const TakeSelfWidget(),
                             ).animateOnPageLoad(
                                 animationsMap['takeSelfOnPageLoadAnimation']!);
-                          case 1:
+                          case 2:
                             return wrapWithModel(
                               model: _model.mRZScannerModel,
                               updateCallback: () => setState(() {}),
                               child: const MRZScannerWidget(),
                             ).animateOnPageLoad(animationsMap[
                                 'mRZScannerOnPageLoadAnimation']!);
-                          case 2:
+                          case 3:
                             return wrapWithModel(
                               model: _model.verifyMatchingModel,
                               updateCallback: () => setState(() {}),
                               child: const VerifyMatchingWidget(),
                             ).animateOnPageLoad(animationsMap[
                                 'verifyMatchingOnPageLoadAnimation']!);
-                          case 3:
+                          case 4:
                             return wrapWithModel(
                               model: _model.pDFReaderModel,
                               updateCallback: () => setState(() {}),
                               child: const PDFReaderWidget(),
                             ).animateOnPageLoad(
                                 animationsMap['pDFReaderOnPageLoadAnimation']!);
-                          case 4:
+                          case 5:
                             return wrapWithModel(
                               model: _model.operationCompeletedModel,
                               updateCallback: () => setState(() {}),

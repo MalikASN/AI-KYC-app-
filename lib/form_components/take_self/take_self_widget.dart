@@ -38,7 +38,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
   };
   int faceProgression = 0;
   double livenessScore = 0.0;
-  DermalogBridge dermalogBridge = DermalogBridge();
+ // DermalogBridge dermalogBridge = DermalogBridge();
 
   // Function to expand the bounding box by a factor
   Rect expandRect(Rect rect, double factor, Size imageSize) {
@@ -85,7 +85,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                 final cross_file.XFile? imageFile =
                     await controller.takePicture();
                 //call liveness SDK
-                dermalogBridge.checkLiveness(imageFile!.path.toString());
+              //  dermalogBridge.checkLiveness(imageFile!.path.toString());
                 setState(() {
                   map["leftRotation"] = true;
                   faceProgression++;
@@ -96,7 +96,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
               } else if (yaw > 60 && faceProgression == 1) {
                 final cross_file.XFile? imageFile =
                     await controller.takePicture();
-                dermalogBridge.checkLiveness(imageFile!.path.toString());
+              //  dermalogBridge.checkLiveness(imageFile!.path.toString());
                 setState(() {
                   map["rightRotation"] = true;
                   faceProgression++;
@@ -108,8 +108,8 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                 final cross_file.XFile? imageFile =
                     await controller.takePicture();
                 //call liveness SDK
-                double score = await dermalogBridge
-                    .checkLiveness(imageFile!.path.toString());
+              //  double score = await dermalogBridge
+                 //   .checkLiveness(imageFile!.path.toString());
                 Vibration.vibrate(duration: 300);
                 setState(() {
                   map["straight"] = true;
@@ -154,8 +154,8 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                 setState(() => _capturedImage = File(imageFile.path));
 
                 // Call external service or perform other operations
-                DermalogBridge dermalogBridge = DermalogBridge();
-                _performAsyncOperations(dermalogBridge, imageFile.path);
+               // DermalogBridge dermalogBridge = DermalogBridge();
+              //  _performAsyncOperations(dermalogBridge, imageFile.path);
 
                 // Reset state after processing
                 setState(() {
@@ -174,10 +174,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
     );
   }
 
-  void _performAsyncOperations(
+  /*void _performAsyncOperations(
       DermalogBridge dermalogBridge, String path) async {
     await dermalogBridge.extractSelfieFaceML(path);
-  }
+  }*/
 
   @override
   void dispose() {
@@ -234,6 +234,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                           0.0, 25.0, 0.0, 0.0),
                       child: FFButtonWidget(
                         onPressed: () async {
+                          
                           setState(() {
                             _capturedImage = null;
                           });
@@ -345,10 +346,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                                           File(imageFile.path));
 
                                       // Call external service or perform other operations
-                                      DermalogBridge dermalogBridge =
-                                          DermalogBridge();
-                                      _performAsyncOperations(
-                                          dermalogBridge, imageFile.path);
+                                    /*  DermalogBridge dermalogBridge =
+                                          DermalogBridge();*/
+                                     /* _performAsyncOperations(
+                                          dermalogBridge, imageFile.path);*/
 
                                       // Reset state after processing
                                       setState(() {
