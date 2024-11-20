@@ -109,7 +109,7 @@ class _FormNavigatorWidgetState extends State<FormNavigatorWidget> {
           ),
           Builder(
             builder: (context) {
-              if (widget.currentStep! < 3) {
+              if (widget.currentStep! < 4) {
                 return FlutterFlowIconButton(
                   borderColor: FlutterFlowTheme.of(context).secondaryBackground,
                   borderRadius: 20.0,
@@ -128,12 +128,16 @@ class _FormNavigatorWidgetState extends State<FormNavigatorWidget> {
                   onPressed: (widget.currentStep == 4)
                       ? null
                       : () async {
-                          if (widget.currentStep == 0 &&
-                              FFAppState().selfieImagePath.isNotEmpty) {
+                          if (widget.currentStep == 0) {
                             FFAppState().multiStepState =
                                 FFAppState().multiStepState + 1;
                           }
                           if (widget.currentStep == 1 &&
+                              FFAppState().selfieImagePath.isNotEmpty) {
+                            FFAppState().multiStepState =
+                                FFAppState().multiStepState + 1;
+                          }
+                          if (widget.currentStep == 2 &&
                               FFAppState().selfieImagePath.isNotEmpty &&
                               FFAppState().documentImagePathRecto.isNotEmpty &&
                               FFAppState().documentImagePathVerso.isNotEmpty &&
@@ -141,7 +145,7 @@ class _FormNavigatorWidgetState extends State<FormNavigatorWidget> {
                             FFAppState().multiStepState =
                                 FFAppState().multiStepState + 1;
                           }
-                          if (widget.currentStep == 2 &&
+                          if (widget.currentStep == 3 &&
                               FFAppState().matchingRes) {
                             FFAppState().multiStepState =
                                 FFAppState().multiStepState + 1;

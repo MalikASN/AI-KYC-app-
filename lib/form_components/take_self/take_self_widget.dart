@@ -38,7 +38,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
   };
   int faceProgression = 0;
   double livenessScore = 0.0;
- // DermalogBridge dermalogBridge = DermalogBridge();
+  DermalogBridge dermalogBridge = DermalogBridge();
 
   // Function to expand the bounding box by a factor
   Rect expandRect(Rect rect, double factor, Size imageSize) {
@@ -153,9 +153,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
 
                 setState(() => _capturedImage = File(imageFile.path));
 
+
                 // Call external service or perform other operations
-               // DermalogBridge dermalogBridge = DermalogBridge();
-              //  _performAsyncOperations(dermalogBridge, imageFile.path);
+                 DermalogBridge dermalogBridge = DermalogBridge();
+                _performAsyncOperations(dermalogBridge, imageFile.path);
 
                 // Reset state after processing
                 setState(() {
@@ -174,10 +175,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
     );
   }
 
-  /*void _performAsyncOperations(
+  void _performAsyncOperations(
       DermalogBridge dermalogBridge, String path) async {
     await dermalogBridge.extractSelfieFaceML(path);
-  }*/
+  }
 
   @override
   void dispose() {
@@ -291,18 +292,6 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                                       Vibration.vibrate(duration: 300);
                                     }
                                   }
-                                  /* print(face.leftEyeOpenProbability!.toString() + "didyy");
-            if (faceProgression == 3 &&
-                face.leftEyeOpenProbability != null &&
-                face.rightEyeOpenProbability != null &&
-                face.leftEyeOpenProbability! > 0.7 &&
-                face.rightEyeOpenProbability! > 0.7) {
-              print("Both eyes are open, ready to capture the image...");
-              setState(() {
-                map["openedEyes"] = true;
-                faceProgression++;
-              });
-            }*/
 
                                   // Take picture only after all conditions are met
                                   if (!map.containsValue(false) &&
@@ -346,10 +335,10 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
                                           File(imageFile.path));
 
                                       // Call external service or perform other operations
-                                    /*  DermalogBridge dermalogBridge =
-                                          DermalogBridge();*/
-                                     /* _performAsyncOperations(
-                                          dermalogBridge, imageFile.path);*/
+                                      DermalogBridge dermalogBridge =
+                                          DermalogBridge();
+                                     _performAsyncOperations(
+                                          dermalogBridge, imageFile.path);
 
                                       // Reset state after processing
                                       setState(() {
@@ -399,22 +388,7 @@ class _TakeSelfWidgetState extends State<TakeSelfWidget> {
               )
             : Column(
                 children: [
-                  Text(faceProgression.toString()),
-                  Image.file(
-                    File(frontPath),
-                    width: 50,
-                    height: 50,
-                  ),
-                  Image.file(
-                    File(rightPath),
-                    width: 50,
-                    height: 50,
-                  ),
-                  Image.file(
-                    File(leftPath),
-                    width: 50,
-                    height: 50,
-                  ),
+
                   SmartFaceCamera(
                     showCaptureControl: false,
                     showCameraLensControl: false,

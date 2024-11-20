@@ -1,5 +1,4 @@
-import 'package:facial_reco_p_o_c/pages/GIFwidget.dart';
-
+import '../../form_components/GIFwidget.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
