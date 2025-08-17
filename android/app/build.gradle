@@ -59,7 +59,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.sga.prod"
-        buildConfigField "String", "LICENSE", "\"eyJ2ZXJzaW9uIjoxLCJjcmVhdGVkIjoiMjAyNC0wMy0wNSIsImN1c3RvbWVyIjoiQ2FwdHVyZURvYyBBTEciLCJvcmRlciI6IiMyMDI0MDMwMTgyMDAwMDcxIOKAlCBGd2Q6IEZhY2lhbCBSZWNvZyB0ZXN0aW5nIGxpY2Vuc2UgZXhwaXJlZCBleHQgb2Y6ICMyMDIzMTAwNDgyMDAwMTA3IOKAlCBDYXB0dXJlRG9jIEFsZ2VyaWVuIiwibGljZW5zZVR5cGUiOiJBUFBMSUNBVElPTiIsImxpY2Vuc2VJZCI6ImQxYmJmNGY4MGE5NDAyMDQyYWRiOGU2NTVlYWQ2M2Y5ODU5MWUzNTg5MTM0ZjBjNjcxMTNkOGUxMjA3ZDczMDYiLCJvcyI6IkFuZHJvaWQiLCJ2YWxpZFVudGlsIjoiMjAyNC0wOS0wNCIsInNka3MiOlt7InByb2R1Y3RJZCI6MTEwMjEwMSwiZGVzY3JpcHRpb24iOiJGYWNlUmVjb2duaXRpb24yIn0seyJwcm9kdWN0SWQiOjExMDIxMDIsImRlc2NyaXB0aW9uIjoiSUNBT0NoZWNrMiJ9LHsicHJvZHVjdElkIjoxMTAyMTAwLCJkZXNjcmlwdGlvbiI6IkZhY2VEZXRlY3Rpb24ifSx7InByb2R1Y3RJZCI6MTEwMjEwNSwiZGVzY3JpcHRpb24iOiJGYWNlRXhwcmVzc2lvbiJ9LHsicHJvZHVjdElkIjoxMTAyMTAzLCJkZXNjcmlwdGlvbiI6IkZhY2UgTGl2ZW5lc3MifV19.MEUCIQDbhZK/mbSqgHMzWkswNfEEYp3H8Fo0g9C7N5M8H2g4PQIgOMhUzzuJMjfKiONYNBxxLkjQXigat4wlRclXc/KCf60=\""
+        buildConfigField "String", "LICENSE", ""
         minSdkVersion 26
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
